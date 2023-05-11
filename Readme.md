@@ -29,7 +29,7 @@ This functionality is fully tested and working if the steps are followed in the 
 - Enable the auto recording of the images while playing.
 
   <img src="images/zed-auto-record-marked.png" alt="zed-auto-record-marked.png" title="Image">
-- Play the Sequencer. Play button will automatically be toggle to Pause. 
+- Play the Sequencer. Play button will automatically be toggle to Pause. Do not touch anything until the file is fully played. 
 
   <img src="images/zed-play-marked.png" alt="zed-play-marked.png" title="Image">
 - Export the timestamps when the file reached to the end. Pause button will automatically be toggle to Play again
