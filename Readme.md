@@ -10,19 +10,19 @@ This functionality is fully tested and working if the steps are followed in the 
   ```
 - Select the SVO filepath.
 
-  <img src="images/zed-select-dataset-file-marked.png" alt="Employee data" title="Employee Data title">
+  <img src="cv_gui/images/zed-select-dataset-file-marked.png" alt="zed-select-dataset-file-marked.png" title="Image">
 - Start the Player.
 
-  <img src="images/zed-start-marked.png" alt="Employee data" title="Employee Data title">
+  <img src="cv_gui/images/zed-start-marked.png" alt="zed-start-marked.png" title="Image">
 - Select the directory in which the images will be saved.
 
-  <img src="images/zed-select-save-folder-marked.png" alt="Employee data" title="Employee Data title">
+  <img src="cv_gui/images/zed-select-save-folder-marked.png" alt="zed-select-save-folder-marked.png" title="Image">
 - Enable the auto recording of the images while playing.
 
-  <img src="images/zed-auto-record-marked.png" alt="Employee data" title="Employee Data title">
+  <img src="cv_gui/images/zed-auto-record-marked.png" alt="zed-auto-record-marked.png" title="Image">
 - Play the Sequencer. Play button will automatically be toggle to Pause. 
 
-  <img src="images/zed-play-marked.png" alt="Employee data" title="Employee Data title">
+  <img src="cv_gui/images/zed-play-marked.png" alt="zed-play-marked.png" title="Image">
 - Export the timestamps when the file reached to the end. Pause button will automatically be toggle to Play again
 
-  <img src="images/zed-timestamp-export-marked.png" alt="Employee data" title="Employee Data title">
+  <img src="cv_gui/images/zed-timestamp-export-marked.png" alt="zed-timestamp-export-marked.png" title="Image">
