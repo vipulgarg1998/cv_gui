@@ -33,12 +33,13 @@ class ZEDSensingMode(Enum):
 
 class ZED(StereoCamera):
     def __init__(self, resolution = ZEDResolution.HD2K, depth_mode = ZEDDepthMode.NEURAL, depth_unit = ZEDDepthUnit.MILLIMETER, svo_file_path = "", 
-                 depth_min_dist = 0.15, depth_max_dist = 50, enable_pos_tracking = False, gray = True, color = True, label_path = ""):
+                 depth_min_dist = 0.15, depth_max_dist = 50, enable_pos_tracking = False, gray = True, color = True, label_path = "", use_rectified = True):
         super().__init__(dataset = DATASET_TYPE.ZED)
         self.zed = sl.Camera()
         
         self.gray = gray
         self.color = color
+        self.use_rectified = use_rectified
 
         # Create a InitParameters object and set configuration parameters
         self.init_params = sl.InitParameters()
@@ -172,21 +173,34 @@ class ZED(StereoCamera):
             return ERROR.END_OF_FILE, data
         
         if(gray):
-            # Retrieve left image
-            self.zed.retrieve_image(self.left_image, sl.VIEW.LEFT_GRAY)
-            # Retrieve left image
-            self.zed.retrieve_image(self.right_image, sl.VIEW.RIGHT_GRAY)
+            if(self.use_rectified):
+                # Retrieve left image
+                self.zed.retrieve_image(self.left_image, sl.VIEW.LEFT_GRAY)
+                # Retrieve left image
+                self.zed.retrieve_image(self.right_image, sl.VIEW.RIGHT_GRAY)
+            else:
+                # Retrieve left image
+                self.zed.retrieve_image(self.left_image, sl.VIEW.LEFT_UNRECTIFIED_GRAY)
+                # Retrieve left image
+                self.zed.retrieve_image(self.right_image, sl.VIEW.RIGHT_UNRECTIFIED_GRAY)
+                
             
             # Convert from zed data type to opencv data type
             data['left_img'] = self.left_image.get_data()
             data['right_img'] = self.right_image.get_data()
 
         if(color):
-            # Retrieve left image
-            self.zed.retrieve_image(self.left_image_color, sl.VIEW.LEFT)
-            # Retrieve left image
-            self.zed.retrieve_image(self.right_image_color, sl.VIEW.RIGHT)
-            
+            if(self.use_rectified):
+                # Retrieve left image
+                self.zed.retrieve_image(self.left_image_color, sl.VIEW.LEFT)
+                # Retrieve left image
+                self.zed.retrieve_image(self.right_image_color, sl.VIEW.RIGHT)
+            else:
+                # Retrieve left image
+                self.zed.retrieve_image(self.left_image_color, sl.VIEW.LEFT_UNRECTIFIED)
+                # Retrieve left image
+                self.zed.retrieve_image(self.right_image_color, sl.VIEW.RIGHT_UNRECTIFIED)
+                
             # Convert from zed data type to opencv data type
             data['left_color_img'] = cv.cvtColor(self.left_image_color.get_data(), cv.COLOR_BGRA2BGR)
             data['right_color_img'] = cv.cvtColor(self.right_image_color.get_data(), cv.COLOR_BGRA2BGR)

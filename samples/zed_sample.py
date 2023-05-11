@@ -23,7 +23,7 @@ class ZEDGUISample:
         
         # Point Cloud is not working on mm yet.
         self.camera = ZED(depth_unit=ZEDDepthUnit.METER, depth_mode=ZEDDepthMode.NEURAL, resolution=ZEDResolution.HD1080, 
-                        depth_min_dist=self.depth_min, depth_max_dist=self.depth_max, gray=self.gray, color=self.color)
+                        depth_min_dist=self.depth_min, depth_max_dist=self.depth_max, gray=self.gray, color=self.color, use_rectified=True)
 
         # Set camera to gui
         self.gui.set_camera(self.camera)
@@ -41,7 +41,6 @@ class ZEDGUISample:
         return f"{data['t']}"
     
     def return_left_image(self, data):
-        # file_name = self.zed.svo_file_path.split('/')[-1].split('.')[0].replace('_', '-')
         file_name = f"Seq001Fr{str(data['index']).zfill(8)}L"
         return data['left_color_img'], GUImageTypes.BGR, file_name
         
