@@ -168,7 +168,6 @@ class ZED(StereoCamera):
         data = {}
 
         err_code = self.zed.grab(self.runtime_parameters)
-
         if(err_code != sl.ERROR_CODE.SUCCESS):
             return ERROR.END_OF_FILE, data
         

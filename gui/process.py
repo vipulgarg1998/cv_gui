@@ -67,15 +67,14 @@ class Process(QThread):
             if(self.do_nothing):
                 time.sleep(0.001)
                 continue
-            
             self.status, data = self.camera.get_next_stereo_images()
-            
             # If no data is left
             if(self.status == ERROR.END_OF_FILE):
                 self.on_eof()
                 while(not self.is_playing):
                     time.sleep(0.001)
-                    continue
+                    
+                continue
             # Update the frame number
             self.current_frame_number = data["index"]
             
@@ -131,7 +130,6 @@ class Process(QThread):
     def jump_to_frame(self, frame_number):
         self.camera.jump_to(frame_number)
         self.current_frame_number = frame_number
-        
         # Update the GUI if the player is paused
         if(not self.is_playing):
             # Get the data
