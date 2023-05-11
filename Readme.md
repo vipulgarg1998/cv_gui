@@ -1,6 +1,31 @@
 # GUI
 This project is intended to visualize the intermediate results from a computer vision pipeline. It is able to handle SVO dataset files from ZED camera as well as KITTI dataset. Currently, this is very unstable and need further devlopment to be completely utilised in any computer vision project. 
 
+## Build
+To build this python package, follow the steps
+- Create a python environment
+  ```
+  cd /path/to/folder/
+  python -m venv cv_gui_venv
+  source /path/to/folder/bin/activate
+  ```
+- Download the package
+  ```
+  cd /path/to/folder/
+  git clone https://github.com/vipulgarg1998/cv_gui.git
+  cd cv_gui
+  ```
+- Install the Pyzed for ZED SDK
+  ```
+  python3 /usr/local/zed/get_python_api.py
+  ```
+- Install the requirements
+  ```
+  pip install -r requirements.txt
+  ```
+  Ignore the Error: ERROR: Failed building wheel for image
+
+
 ## Samples
 I have provided one sample file for the zed camera called [zed_sample](samples/zed_sample.py)  that can be used to interfaced with the GUI. There are a lot of functions that the GUI provide and can be interfaced with the handling script but for the dataset creation purpose, I will be focusing on the following 
 

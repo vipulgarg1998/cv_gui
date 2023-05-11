@@ -76,7 +76,6 @@ class Process(QThread):
                 while(not self.is_playing):
                     time.sleep(0.001)
                     continue
-            
             # Update the frame number
             self.current_frame_number = data["index"]
             
