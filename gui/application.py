@@ -311,31 +311,31 @@ class Application(QMainWindow):
         self.recorder.use_pdf_file_ext = state
 
     @Slot(QImage)
-    def setImage1(self, image, image_type, image_name):
+    def setImage1(self, image, image_type, image_name, forcefully_save_img):
         # Update the frame in the recorder
         self.recorder.img1 = image
         
         # Update the frame in UI
-        self.image1.set_image(image, image_type, image_name, auto_update=self.process.is_playing)
+        self.image1.set_image(image, image_type, image_name, auto_update=self.process.is_playing, forcefully_save_img=forcefully_save_img)
         
         # Just update the position of the slider. Dont call update_frame_number()
         self.video_control_widget.update(frame_number=self.process.current_frame_number, block_signals=True)
         
     @Slot(QImage)
-    def setImage2(self, image, image_type, image_name):
+    def setImage2(self, image, image_type, image_name, forcefully_save_img):
         # Update the frame in the recorder
         self.recorder.img2 = image
                 
         # Update the frame in UI
-        self.image2.set_image(image, image_type, image_name, auto_update=self.process.is_playing)
+        self.image2.set_image(image, image_type, image_name, auto_update=self.process.is_playing, forcefully_save_img=forcefully_save_img)
         
     @Slot(QImage)
-    def setImage3(self, image, image_type, image_name):
+    def setImage3(self, image, image_type, image_name, forcefully_save_img):
         # Update the frame in the recorder
         self.recorder.img3 = image
                 
         # Update the frame in UI
-        self.image3.set_image(image, image_type, image_name, auto_update=self.process.is_playing)
+        self.image3.set_image(image, image_type, image_name, auto_update=self.process.is_playing, forcefully_save_img=forcefully_save_img)
         
     @Slot(QImage)
     def set_timestamp(self, timestamp):

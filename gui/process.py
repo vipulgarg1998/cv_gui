@@ -11,9 +11,9 @@ from gui.utils import ERROR, GUImageTypes
 
 
 class Process(QThread):
-    updateFrame1 = Signal(np.ndarray, GUImageTypes,  str)
-    updateFrame2 = Signal(np.ndarray, GUImageTypes, str)
-    updateFrame3 = Signal(np.ndarray, GUImageTypes, str)
+    updateFrame1 = Signal(np.ndarray, GUImageTypes, str, bool)
+    updateFrame2 = Signal(np.ndarray, GUImageTypes, str, bool)
+    updateFrame3 = Signal(np.ndarray, GUImageTypes, str, bool)
     updateTimestamp= Signal(str)
 
     def __init__(self, parent=None, add_extra_image_window = False):
@@ -94,31 +94,31 @@ class Process(QThread):
             while(not self.is_playing):
                 # Do not send new data to the camera
                 # if(self.tracking_mode):
-                time.sleep(0.001)
-                continue
                 # Send this data to process
                 self.send_data_to_camera(self.data, old_frame = True)
-                self.update(data=self.data)
-                time.sleep(0.001)
+                # print("In While LOOP")
+                self.update(data=self.data, old_frame = True)
+                time.sleep(0.1)
                 # time.sleep(1)
                 continue
         sys.exit(-1)
 
-    def update(self, data = {}):
+    def update(self, data = {}, old_frame = False):
         # Current image on display
         # self.current_img = data['left_img']
         self.current_img1, img1_format_type, img1_name = self.img1_callback(data)
         self.current_img2, img2_format_type, img2_name = self.img2_callback(data)
         self.timestamp = self.timestamp_callback(data)
-        
+        # print(old_frame, img1_name)
+        forcefully_save_img = not old_frame
         # Emit signal
-        self.updateFrame1.emit(self.current_img1, img1_format_type, img1_name)
-        self.updateFrame2.emit(self.current_img2, img2_format_type, img2_name)
+        self.updateFrame1.emit(self.current_img1, img1_format_type, img1_name, forcefully_save_img)
+        self.updateFrame2.emit(self.current_img2, img2_format_type, img2_name, forcefully_save_img)
         self.updateTimestamp.emit(self.timestamp)
         
         if(self.add_extra_image_window):
             self.current_img3, img3_format_type, img3_name = self.img3_callback(data)
-            self.updateFrame3.emit(self.current_img3, img3_format_type, img3_name)
+            self.updateFrame3.emit(self.current_img3, img3_format_type, img3_name, forcefully_save_img)
         
     def get_img_dim(self, img):
         ch = 1
@@ -143,6 +143,7 @@ class Process(QThread):
             self.data = data
             # Send this data to process
             self.send_data_to_camera(data, old_frame = False)
+            # print("Jump to frame")
             # Update the GUI
             self.update(data)
 

@@ -37,12 +37,7 @@ class ImageNameSaveWidget(QWidget):
         self.setLayout(self.image_save_layout)
         
     def set_image_name(self, name, auto_update = False):
-        if(auto_update):
-            self.image_name_text_box.setText(name)
-            return
-        
-        file_name = self.image_name_text_box.text()
-        if(file_name == ""):
+        if(not self.image_name_text_box.underMouse()):
             self.image_name_text_box.setText(name)
             
     def set_on_save(self, func):
@@ -117,12 +112,12 @@ class ImageSaveWidget(QWidget):
     def set_on_save(self, func):
         self.image_save_widget.set_on_save(func)
         
-    def set_image(self, img, img_format_type, image_name, auto_update = False):
+    def set_image(self, img, img_format_type, image_name, auto_update = False, forcefully_save_img=False):
         self.image_widget.set_image(img, img_format_type)
         
         self.image_save_widget.set_image_name(image_name, auto_update=auto_update)
         
-        if(auto_update and self.image_save_widget.auto_record):
+        if((auto_update or forcefully_save_img) and self.image_save_widget.auto_record):
             self.image_save_widget.on_save_()
     
     def reset(self):

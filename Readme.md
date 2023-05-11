@@ -11,7 +11,7 @@ I have provided one sample file for the zed camera called [zed_sample](samples/z
   The GUI request the handling script to the return the image to be displaced. Along with the image, a name can be passed as well. This name will be used to save the images in auto_record mode. Function ```return_left_image``` and ```return_right_image``` can be used to modify the file names in the [zed_sample](samples/zed_sample.py)
 
 ## Create Images Dataset Using GUI for ZED Camera
-This functionality is fully tested and working if the steps are followed in the given sequence only. If the steps are followed exactly, you will have all the left and right images in a folder (all images except the first image that is frame 0), however, the timestamp file will have all the timestamps including the timestamp for frame 0. The following sample takes left and right rectified images from the zed camera and display it in the GUI.
+This functionality is fully tested and working if the steps are followed in the given sequence only. If the steps are followed exactly, you will have all the left and right images in a folder. The following sample takes left and right rectified images from the zed camera and display it in the GUI.
 
 - Run the application
   ```
@@ -20,15 +20,15 @@ This functionality is fully tested and working if the steps are followed in the 
 - Select the SVO filepath.
 
   <img src="images/zed-select-dataset-file-marked.png" alt="zed-select-dataset-file-marked.png" title="Image">
-- Start the Player.
-
-  <img src="images/zed-start-marked.png" alt="zed-start-marked.png" title="Image">
 - Select the directory in which the images will be saved.
 
   <img src="images/zed-select-save-folder-marked.png" alt="zed-select-save-folder-marked.png" title="Image">
 - Enable the auto recording of the images while playing.
 
   <img src="images/zed-auto-record-marked.png" alt="zed-auto-record-marked.png" title="Image">
+- Start the Player.
+
+  <img src="images/zed-start-marked.png" alt="zed-start-marked.png" title="Image">
 - Play the Sequencer. Play button will automatically be toggle to Pause. Do not touch anything until the file is fully played. 
 
   <img src="images/zed-play-marked.png" alt="zed-play-marked.png" title="Image">
