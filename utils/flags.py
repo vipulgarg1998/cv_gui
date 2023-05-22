@@ -1,8 +1,15 @@
-from PySide6.QtGui import QAction, QImage
+from PySide6.QtGui import QImage
 
 from enum import Enum
 
-class GUImageTypes(Enum):
+class CAMERA_TYPE(Enum):
+    LEFT_GRAY = 0
+    RIGHT_GRAY = 1
+    LEFT_RGB = 2
+    RIGHT_RGB = 3
+    
+    
+class IMAGE_TYPES(Enum):
     RGB = QImage.Format_RGB888 # The image is stored using a 24-bit RGB format (8-8-8).
     BGR = QImage.Format_BGR888 # The image is stored using a 24-bit BGR format (8-8-8).
     GRAY8 = QImage.Format_Grayscale8 # The image is stored using an 8-bit grayscale format. 
@@ -18,9 +25,4 @@ class ERROR(Enum):
     NO_DATA_FOUND = 1,
     NO_FILE_FOUND = 2,
     END_OF_FILE = 3,
-    NO_GFTT_FOUND = 4,
-    NO_FAR_GFTT_FOUND = 5,
-    NO_LK_CORRESPONDENCES = 6,
-    NOT_ENOUGH_CORRESPONDENCES = 7,
-    NO_CORRESPONDENCES = 8,
-    FAILURE = 9,
+    FAILURE = 4,

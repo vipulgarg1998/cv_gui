@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QSlider,
                                QLineEdit, QFormLayout, QScrollArea, QCheckBox,
                                QStackedWidget, QGridLayout)
 
-from gui.utils import DATASET_TYPE
+from cv_gui.utils.flags import DATASET_TYPE
         
 class ImageNameSaveWidget(QWidget):
     def __init__(self, on_save = None, parent=None, default_enabled = False):

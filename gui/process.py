@@ -1,19 +1,15 @@
-import datetime
 import sys
 import time
-from PySide6.QtCore import Qt, QThread, Signal, Slot
-from PySide6.QtGui import QImage
-import cv2
-from PIL import Image
+from PySide6.QtCore import QThread, Signal
 import numpy as np
 
-from gui.utils import ERROR, GUImageTypes
+import cv_gui.utils.flags as cv_gui
 
 
 class Process(QThread):
-    updateFrame1 = Signal(np.ndarray, GUImageTypes, str, bool)
-    updateFrame2 = Signal(np.ndarray, GUImageTypes, str, bool)
-    updateFrame3 = Signal(np.ndarray, GUImageTypes, str, bool)
+    updateFrame1 = Signal(np.ndarray, cv_gui.IMAGE_TYPES, str, bool)
+    updateFrame2 = Signal(np.ndarray, cv_gui.IMAGE_TYPES, str, bool)
+    updateFrame3 = Signal(np.ndarray, cv_gui.IMAGE_TYPES, str, bool)
     updateTimestamp= Signal(str)
 
     def __init__(self, parent=None, add_extra_image_window = False):
@@ -69,7 +65,7 @@ class Process(QThread):
                 continue
             self.status, data = self.camera.get_next_stereo_images()
             # If no data is left
-            if(self.status == ERROR.END_OF_FILE):
+            if(self.status == cv_gui.ERROR.END_OF_FILE):
                 self.on_eof()
                 while(not self.is_playing):
                     time.sleep(0.001)

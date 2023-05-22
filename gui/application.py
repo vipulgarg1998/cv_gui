@@ -1,11 +1,7 @@
-import os
 import sys
 import time
-from PIL import Image
 
-from datetime import datetime
-import cv2
-from PySide6.QtCore import Qt, QThread, Signal, Slot
+from PySide6.QtCore import Slot
 import numpy as np
 import pyqtgraph as pg
 from PySide6.QtGui import QAction, QImage, QKeySequence, QPixmap, QIntValidator
@@ -13,11 +9,11 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QSlider,
                                QHBoxLayout, QLabel, QMainWindow, QPushButton,
                                QSizePolicy, QVBoxLayout, QWidget, QFileDialog,
                                QLineEdit, QFormLayout, QScrollArea, QCheckBox)
-from gui.process import Process
-from gui.recorder import Recorder
+from cv_gui.gui.process import Process
+from cv_gui.utils.recorder import Recorder
 
-from gui.utils import DATASET_TYPE
-from gui.widgets import DatasetWidget, DynamicParameterWidget, ImageSaveWidget, PlotWidget, SaveMenuWidget, StartStopResetWidget, TimestampWidget, VideoControlWidget
+import cv_gui.utils.flags as cv_gui
+from cv_gui.gui.widgets import DatasetWidget, DynamicParameterWidget, ImageSaveWidget, PlotWidget, SaveMenuWidget, StartStopResetWidget, TimestampWidget, VideoControlWidget
 
 class Application(QMainWindow):
     def __init__(self, add_extra_image_window = False, add_plotter = False):        
@@ -29,7 +25,7 @@ class Application(QMainWindow):
         self.is_playing = False
         self.init_file_name1 = False
         self.init_file_name2 = False
-        self.selected_dataset_type = DATASET_TYPE.ZED
+        self.selected_dataset_type = cv_gui.DATASET_TYPE.ZED
         self.on_frame_jump_callback = None
         self.dynamic_paramters = {}
         self.add_extra_image_window = add_extra_image_window
@@ -50,7 +46,7 @@ class Application(QMainWindow):
         self.video_control_widget = VideoControlWidget(is_playing=self.is_playing)
         
         # Create Widget for Datasets
-        self.dataset_widget = DatasetWidget(dataset_type=DATASET_TYPE.ZED)
+        self.dataset_widget = DatasetWidget(dataset_type=cv_gui.DATASET_TYPE.ZED)
         
         # Save Menu Widget
         self.save_menu_widget = SaveMenuWidget()
@@ -217,10 +213,10 @@ class Application(QMainWindow):
     def on_start(self):
         print("Starting...")
                 
-        if(self.dataset_widget.dataset_type == DATASET_TYPE.ZED):
+        if(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.ZED):
             self.process.on_start(self.dataset_widget.zed_dataset_widget.zed_dataset_file_path,
                                   self.dataset_widget.zed_dataset_widget.zed_label_folder_path)
-        elif(self.dataset_widget.dataset_type == DATASET_TYPE.KITTI):
+        elif(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.KITTI):
             self.process.on_start(self.dataset_widget.kitti_dataset_widget.kitti_left_folder_path, 
                                   self.dataset_widget.kitti_dataset_widget.kitti_right_folder_path, 
                                   self.dataset_widget.kitti_dataset_widget.kitti_label_folder_path, 

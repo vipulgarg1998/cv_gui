@@ -2,13 +2,11 @@ import os
 import cv2 as cv
 import numpy as np
 from enum import Enum
-from scripts.camera import CameraType
-from scripts.flags import ERROR
-from scripts.stereo_camera import StereoCamera
-from scripts.utils import DatasetType
+from cv_gui.dataset_handlers.stereo_camera import StereoCamera
+import cv_gui.utils.flags as cv_gui
 
 class DatasetLoader(StereoCamera):
-    def __init__(self, left_path = "", right_path = "", label_path = "", dataset_type = DatasetType.KITTI, pose_file = "", timestamp_file = "", 
+    def __init__(self, left_path = "", right_path = "", label_path = "", dataset_type = cv_gui.DATASET_TYPE.KITTI, pose_file = "", timestamp_file = "", 
                  calib_file = "", gray = True, color = True):
         super().__init__(dataset=dataset_type)
         
@@ -46,7 +44,7 @@ class DatasetLoader(StereoCamera):
         self.pose_file = path
 
     def init(self):
-        if(self.dataset_type == DatasetType.KITTI):
+        if(self.dataset_type == cv_gui.DATASET_TYPE.KITTI):
             left_img_folder = self.left_path
             right_img_folder = self.right_path
             label_img_foler = self.label_path
@@ -97,8 +95,8 @@ class DatasetLoader(StereoCamera):
                     poses.append(T_w_cam0)
 
                     # The transformation of right camera w.r.t left camera
-                    R = self.cam_parameters[CameraType.RIGHT_GRAY.name]["r"]
-                    t = self.cam_parameters[CameraType.RIGHT_GRAY.name]["t"][0:3]
+                    R = self.cam_parameters[cv_gui.CAMERA_TYPE.RIGHT_GRAY.name]["r"]
+                    t = self.cam_parameters[cv_gui.CAMERA_TYPE.RIGHT_GRAY.name]["t"][0:3]
                     T_w_cam_right = np.vstack((np.hstack((R, t)), [0, 0, 0, 1]))
 
                     poses_right_cam.append(T_w_cam0@T_w_cam_right)
@@ -136,7 +134,7 @@ class DatasetLoader(StereoCamera):
         assert gray or color, "Either gray or color frag should be true"
 
         if(self.idx == self.img_count):
-            return ERROR.END_OF_FILE, data
+            return cv_gui.ERROR.END_OF_FILE, data
 
         
         left_color_img = cv.imread(self.left_img_files[self.idx])
@@ -174,7 +172,7 @@ class DatasetLoader(StereoCamera):
             
         self.idx = self.idx + 1
         
-        return ERROR.SUCCESS, data
+        return cv_gui.ERROR.SUCCESS, data
     
     def get_frame_count(self):
         return self.img_count

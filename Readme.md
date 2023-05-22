@@ -38,9 +38,13 @@ I have provided one sample file for the zed camera called [zed_sample](samples/z
 ## Create Images Dataset Using GUI for ZED Camera
 This functionality is fully tested and working if the steps are followed in the given sequence only. If the steps are followed exactly, you will have all the left and right images in a folder. The following sample takes left and right rectified images from the zed camera and display it in the GUI.
 
+- Change the directory to where the cv_gui package is installed and not inside the package itself.
+  ```
+  cd /path/to/folder
+  ```
 - Run the application
   ```
-  python3 -m samples.zed_sample
+  python3 -m cv_gui.samples.zed_sample
   ```
 - Select the SVO filepath.
 

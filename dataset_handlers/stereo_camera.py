@@ -1,13 +1,13 @@
-from dataset_handlers.camera import Camera, CameraType
+from cv_gui.dataset_handlers.camera import Camera
 
 import numpy as np
 import cv2 as cv
 
-from gui.utils import DATASET_TYPE
+import cv_gui.utils.flags as cv_gui
 
 
 class StereoCamera(Camera):
-    def __init__(self, dataset = DATASET_TYPE.KITTI):
+    def __init__(self, dataset = cv_gui.DATASET_TYPE.KITTI):
         super().__init__(dataset = dataset)
 
         self.base_camera_type = None

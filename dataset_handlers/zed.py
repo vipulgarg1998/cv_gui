@@ -1,6 +1,4 @@
-from gui.utils import ERROR
-from dataset_handlers.stereo_camera import StereoCamera
-from dataset_handlers.camera import CameraType
+from cv_gui.dataset_handlers.stereo_camera import StereoCamera
 
 import cv2 as cv
 import numpy as np
@@ -9,7 +7,7 @@ import math
 import os
 from enum import Enum
 
-from gui.utils import DATASET_TYPE
+import cv_gui.utils.flags as cv_gui
 
 class ZEDDepthUnit(Enum):
     METER = sl.UNIT.METER
@@ -34,7 +32,7 @@ class ZEDSensingMode(Enum):
 class ZED(StereoCamera):
     def __init__(self, resolution = ZEDResolution.HD2K, depth_mode = ZEDDepthMode.NEURAL, depth_unit = ZEDDepthUnit.MILLIMETER, svo_file_path = "", 
                  depth_min_dist = 0.15, depth_max_dist = 50, enable_pos_tracking = False, gray = True, color = True, label_path = "", use_rectified = True):
-        super().__init__(dataset = DATASET_TYPE.ZED)
+        super().__init__(dataset = cv_gui.DATASET_TYPE.ZED)
         self.zed = sl.Camera()
         
         self.gray = gray
@@ -114,8 +112,8 @@ class ZED(StereoCamera):
         self.depth_color_image = sl.Mat(width, height, sl.MAT_TYPE.U8_C4)
 
         # Get and Update Calibration Matrix
-        self.set_calibration_parameters(camera_type=CameraType.LEFT_RGB, calib_params=self.get_calib_params(camera_type=CameraType.LEFT_RGB))
-        self.set_calibration_parameters(camera_type=CameraType.RIGHT_RGB, calib_params=self.get_calib_params(camera_type=CameraType.RIGHT_RGB))
+        self.set_calibration_parameters(camera_type=cv_gui.CAMERA_TYPE.LEFT_RGB, calib_params=self.get_calib_params(camera_type=cv_gui.CAMERA_TYPE.LEFT_RGB))
+        self.set_calibration_parameters(camera_type=cv_gui.CAMERA_TYPE.RIGHT_RGB, calib_params=self.get_calib_params(camera_type=cv_gui.CAMERA_TYPE.RIGHT_RGB))
     
     def get_img_files_from_dir(self, dir):
         files = os.listdir(dir)
@@ -133,7 +131,7 @@ class ZED(StereoCamera):
     def get_calib_params(self, camera_type):
         calib_params = {}
         calibration_params = self.zed.get_camera_information().camera_configuration.calibration_parameters
-        if(camera_type == CameraType.LEFT_RGB):
+        if(camera_type == cv_gui.CAMERA_TYPE.LEFT_RGB):
             fx = calibration_params.left_cam.fx
             fy = calibration_params.left_cam.fy
             cx = calibration_params.left_cam.cx
@@ -141,7 +139,7 @@ class ZED(StereoCamera):
             R = np.array([[0], [0], [0]])       # Identity Rotation as Left camera is the reference camera
             T = np.array([[0], [0], [0]])       # Null translation 
 
-        if(camera_type == CameraType.RIGHT_RGB):
+        if(camera_type == cv_gui.CAMERA_TYPE.RIGHT_RGB):
             fx = calibration_params.right_cam.fx
             fy = calibration_params.right_cam.fy
             cx = calibration_params.right_cam.cx
@@ -169,7 +167,7 @@ class ZED(StereoCamera):
 
         err_code = self.zed.grab(self.runtime_parameters)
         if(err_code != sl.ERROR_CODE.SUCCESS):
-            return ERROR.END_OF_FILE, data
+            return cv_gui.ERROR.END_OF_FILE, data
         
         if(gray):
             if(self.use_rectified):
@@ -215,7 +213,7 @@ class ZED(StereoCamera):
         # update the frame count
         self.idx = self.idx + 1
 
-        return ERROR.SUCCESS, data
+        return cv_gui.ERROR.SUCCESS, data
     
     def get_depth_img(self):
         # Retrieve depth map. Depth is aligned on the left image

@@ -1,8 +1,6 @@
-import time
-from dataset_handlers.camera import CameraType
-from dataset_handlers.zed import ZED, ZEDDepthMode, ZEDDepthUnit, ZEDResolution, ZEDSensingMode
-from gui.application import Application
-from gui.utils import GUImageTypes
+from cv_gui.dataset_handlers.zed import ZED, ZEDDepthMode, ZEDDepthUnit, ZEDResolution, ZEDSensingMode
+from cv_gui.gui.application import Application
+import cv_gui.utils.flags as cv_gui
 
 class ZEDGUISample:
     def __init__(self):    
@@ -42,11 +40,11 @@ class ZEDGUISample:
     
     def return_left_image(self, data):
         file_name = f"Seq001Fr{str(data['index']).zfill(8)}L"
-        return data['left_color_img'], GUImageTypes.BGR, file_name
+        return data['left_color_img'], cv_gui.IMAGE_TYPES.BGR, file_name
         
     def return_right_image(self, data):
         file_name = f"Seq001Fr{str(data['index']).zfill(8)}R"
-        return data['right_color_img'], GUImageTypes.BGR, file_name
+        return data['right_color_img'], cv_gui.IMAGE_TYPES.BGR, file_name
 
     def on_zed_start(self, filepath, label_path = ""):
         print(label_path)
@@ -57,7 +55,7 @@ class ZEDGUISample:
         
     def setup_stereo(self):
         self.camera.init()
-        self.camera.set_base_camera_type_for_intrinsics(camera_type=CameraType.LEFT_RGB)
+        self.camera.set_base_camera_type_for_intrinsics(camera_type=cv_gui.CAMERA_TYPE.LEFT_RGB)
         
     def on_frame_jump(self, frame_number):
         # DO something if required
