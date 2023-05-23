@@ -246,7 +246,7 @@ class ZED(StereoCamera):
 
     def get_zed_point_cloud(self):
         self.zed.retrieve_measure(self.point_cloud, sl.MEASURE.XYZRGBA)
-        return self.point_cloud
+        return self.point_cloud.get_data()
 
     def get_zed_confidence_img(self):
         # Retrieve depth map. Depth is aligned on the left image
