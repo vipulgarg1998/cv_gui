@@ -20,6 +20,9 @@ class Application(QMainWindow):
         self.app = QApplication()
         super().__init__()
         
+        # Callback functions
+        self.on_close = None
+        
         # Params
         self.add_plotter = add_plotter
         self.is_playing = False
@@ -79,7 +82,7 @@ class Application(QMainWindow):
             self.process.updateFrame3.connect(self.setImage3)
             
         # Recorder
-        self.recorder = Recorder()
+        self.data_recorder = Recorder()
 
     def reset(self):
         self.process.reset_process()
@@ -96,7 +99,7 @@ class Application(QMainWindow):
         self.start_stop_reset_button_widget.reset()
         if(self.add_plotter):
             self.plot_widget.reset()
-        self.recorder.reset()
+        self.data_recorder.reset()
         
         
     def init_menu_bar(self):
@@ -196,18 +199,18 @@ class Application(QMainWindow):
 
     @Slot()
     def on_save_image1(self, file_name):
-        self.recorder.save_figure(file_name, 1)
+        self.data_recorder.save_figure(file_name, 1)
         
     @Slot()
     def on_save_image2(self, file_name):
-        self.recorder.save_figure(file_name, 2)
+        self.data_recorder.save_figure(file_name, 2)
         
     @Slot()
     def on_save_image3(self, file_name):
-        self.recorder.save_figure(file_name, 3)
+        self.data_recorder.save_figure(file_name, 3)
         
     def on_export_timestamp(self, file_name):
-        self.recorder.save_timestamps(file_name)
+        self.data_recorder.save_timestamps(file_name)
 
     @Slot()
     def on_start(self):
@@ -261,7 +264,7 @@ class Application(QMainWindow):
         
     @Slot()
     def on_save_dir_selected(self, dir_name):
-        self.recorder.save_dir_name = dir_name
+        self.data_recorder.save_dir_name = dir_name
         
     @Slot()
     def on_frame_jump(self, frame_number):
@@ -296,20 +299,20 @@ class Application(QMainWindow):
         
     @Slot()
     def on_file_name_prefix_checkbox_state_change(self, state):
-        self.recorder.add_date_prefix_to_file_name = state
+        self.data_recorder.add_date_prefix_to_file_name = state
 
     @Slot()
     def on_use_jpeg_ext_checkbox_state_change(self, state):
-        self.recorder.use_jpeg_file_ext = state
+        self.data_recorder.use_jpeg_file_ext = state
 
     @Slot()
     def on_use_pdf_ext_checkbox_state_change(self, state):
-        self.recorder.use_pdf_file_ext = state
+        self.data_recorder.use_pdf_file_ext = state
 
     @Slot(QImage)
     def setImage1(self, image, image_type, image_name, forcefully_save_img):
-        # Update the frame in the recorder
-        self.recorder.img1 = image
+        # Update the frame in the data_recorder
+        self.data_recorder.img1 = image
         
         # Update the frame in UI
         self.image1.set_image(image, image_type, image_name, auto_update=self.process.is_playing, forcefully_save_img=forcefully_save_img)
@@ -319,16 +322,16 @@ class Application(QMainWindow):
         
     @Slot(QImage)
     def setImage2(self, image, image_type, image_name, forcefully_save_img):
-        # Update the frame in the recorder
-        self.recorder.img2 = image
+        # Update the frame in the data_recorder
+        self.data_recorder.img2 = image
                 
         # Update the frame in UI
         self.image2.set_image(image, image_type, image_name, auto_update=self.process.is_playing, forcefully_save_img=forcefully_save_img)
         
     @Slot(QImage)
     def setImage3(self, image, image_type, image_name, forcefully_save_img):
-        # Update the frame in the recorder
-        self.recorder.img3 = image
+        # Update the frame in the data_recorder
+        self.data_recorder.img3 = image
                 
         # Update the frame in UI
         self.image3.set_image(image, image_type, image_name, auto_update=self.process.is_playing, forcefully_save_img=forcefully_save_img)
@@ -338,13 +341,24 @@ class Application(QMainWindow):
         # Update the frame in UI
         self.timestamp_widget.set_timestamp(timestamp)
         
-        self.recorder.add_timestamp(timestamp)
+        self.data_recorder.add_timestamp(timestamp)
+        
+    def closeEvent(self, event):
+        self.close()
         
     def close(self):
+        print("Closing Application")
+        self.on_close()
+        self.exit()
+        
+    def exit(self):
         sys.exit(self.app.exec())
         
     def set_on_start(self, on_start):
         self.process.on_start = on_start
+        
+    def set_on_close(self, on_close):
+        self.on_close = on_close
         
     def set_on_reset(self, on_reset):
         self.start_stop_reset_button_widget.set_on_reset(on_reset)

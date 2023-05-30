@@ -38,6 +38,7 @@ class ZED(StereoCamera):
         self.gray = gray
         self.color = color
         self.use_rectified = use_rectified
+        self.dataset_type = cv_gui.DATASET_TYPE.ZED
 
         # Create a InitParameters object and set configuration parameters
         self.init_params = sl.InitParameters()

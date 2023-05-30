@@ -468,7 +468,8 @@ class SaveMenuWidget(QWidget):
         self.on_use_pdf_ext_checkbox_state_change(state)
         
 class ZEDDatasetWidget(QWidget):
-    def __init__(self, parent=None, default_dataset_file_path = "/home/vipul/Documents/ZED/loop_closure_zeabuz.svo",
+    def __init__(self, parent=None, 
+                 default_dataset_file_path = "/home/vipul/Documents/ZED/Z1-FT-MB-SEQ-1-loop_closure_zeabuz.svo",
                  default_label_folder_path = "/home/vipul/Documents/ZED/loop_closure_dataset/env_seg"):
         
         QWidget.__init__(self, parent=parent)
@@ -638,7 +639,7 @@ class DatasetWidget(QWidget):
         self.dataset_type_list_widget.setCurrentText(self.dataset_type.name)
         
         # Dataset Widgets
-        self.zed_dataset_widget = ZEDDatasetWidget(default_dataset_file_path="", default_label_folder_path="")
+        self.zed_dataset_widget = ZEDDatasetWidget()
         self.kitti_dataset_widget = KITTIDatasetWidget()
         self.video_dataset_widget = VideoDatasetWidget()
         
