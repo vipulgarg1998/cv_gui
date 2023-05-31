@@ -639,7 +639,7 @@ class DatasetWidget(QWidget):
         self.dataset_type_list_widget.setCurrentText(self.dataset_type.name)
         
         # Dataset Widgets
-        self.zed_dataset_widget = ZEDDatasetWidget()
+        self.zed_dataset_widget = ZEDDatasetWidget(default_label_folder_path="", default_dataset_file_path="")
         self.kitti_dataset_widget = KITTIDatasetWidget()
         self.video_dataset_widget = VideoDatasetWidget()
         
