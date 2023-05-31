@@ -532,6 +532,13 @@ class KITTIDatasetWidget(QWidget):
         self.kitti_time_file_path = "/home/vipul/Documents/projects/zb_vslam/data/data_odometry_calib/dataset/sequences/00/times.txt"
         self.kitti_poses_file_path = "/home/vipul/Documents/projects/zb_vslam/data/data_odometry_poses/dataset/poses/00.txt"
         
+        self.kitti_left_folder_path = ""
+        self.kitti_right_folder_path = ""
+        self.kitti_label_folder_path = ""
+        self.kitti_calib_file_path = ""
+        self.kitti_time_file_path = ""
+        self.kitti_poses_file_path = ""
+        
         # Create UI for KITTI
         self.kitti_left_folder_label = QLabel("Left Images")
         self.kitti_left_folder_button = QPushButton("Select Folder")

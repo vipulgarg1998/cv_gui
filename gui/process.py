@@ -82,7 +82,7 @@ class Process(QThread):
             
             # Update the frame
             self.update(data=data)
-            time.sleep(0.1)
+            time.sleep(0.05)
             
             # print(self.current_frame_number)
             while(not self.is_playing):

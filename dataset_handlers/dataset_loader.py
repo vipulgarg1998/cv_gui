@@ -168,7 +168,7 @@ class DatasetLoader(StereoCamera):
         if(self.timestamp_file):
             data["t"] = self.timestamps[self.idx][0]
         if(self.label_path):
-            data["label_img"] = cv.imread(self.label_img_files[self.idx])
+            data["label_img"] = cv.imread(self.label_img_files[self.idx], 0)
             
         self.idx = self.idx + 1
         
