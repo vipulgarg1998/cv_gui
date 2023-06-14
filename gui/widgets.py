@@ -509,16 +509,26 @@ class ZEDDatasetWidget(QWidget):
             
     @Slot()
     def select_zed_file(self):
-        self.zed_dataset_file_path = QFileDialog.getOpenFileName()[0]
-        self.zed_dataset_file_button.setText(self.zed_dataset_file_path.split('/')[-1])
+        filepath = QFileDialog.getOpenFileName()[0]
+        self.set_zed_file(filepath)
         
     @Slot()
     def select_label_folder(self):
         dialog = QFileDialog(self, windowTitle='Select directory')
         dialog.setFileMode(dialog.Directory)
-        dataset_path = dialog.getExistingDirectory()
-        self.zed_label_folder_path = dataset_path
-        self.zed_label_folder_button.setText(dataset_path.split('/')[-1])
+        folder_path = dialog.getExistingDirectory()
+        self.set_label_folder(folder_path)
+      
+    @Slot()  
+    def set_zed_file(self, filepath):
+        self.zed_dataset_file_path = filepath
+        self.zed_dataset_file_button.setText(self.zed_dataset_file_path.split('/')[-1])
+      
+    @Slot()  
+    def set_label_folder(self, folder_path):
+        self.zed_label_folder_path = folder_path
+        self.zed_label_folder_button.setText(folder_path.split('/')[-1])
+        
                 
 class KITTIDatasetWidget(QWidget):
     def __init__(self, parent=None):
@@ -580,43 +590,69 @@ class KITTIDatasetWidget(QWidget):
     def select_kitti_left_folder(self):
         dialog = QFileDialog(self, windowTitle='Select directory')
         dialog.setFileMode(dialog.Directory)
-        dataset_path = dialog.getExistingDirectory()
-        self.kitti_left_folder_path = dataset_path
-        self.kitti_left_folder_button.setText(dataset_path.split('/')[-1])
+        folder_path = dialog.getExistingDirectory()
+        self.set_left_images_folder(folder_path)
         
     @Slot()
     def select_kitti_right_folder(self):
         dialog = QFileDialog(self, windowTitle='Select directory')
         dialog.setFileMode(dialog.Directory)
-        dataset_path = dialog.getExistingDirectory()
-        self.kitti_right_folder_path = dataset_path
-        self.kitti_right_folder_button.setText(dataset_path.split('/')[-1])
+        folder_path = dialog.getExistingDirectory()
+        self.set_right_images_folder(folder_path)
         
     @Slot()
     def select_kitti_label_folder(self):
         dialog = QFileDialog(self, windowTitle='Select directory')
         dialog.setFileMode(dialog.Directory)
-        dataset_path = dialog.getExistingDirectory()
-        self.kitti_label_folder_path = dataset_path
-        self.kitti_label_folder_button.setText(dataset_path.split('/')[-1])
+        folder_path = dialog.getExistingDirectory()
+        self.set_label_images_folder(folder_path)
 
     @Slot()
     def select_kitti_time_file(self):
         file_path = QFileDialog.getOpenFileName()[0]
-        self.kitti_time_file_path = file_path
-        self.kitt_dataset_time_file_button.setText(file_path.split('/')[-1])
+        self.set_timestamps_file(file_path)
     
     @Slot()
     def select_kitti_calib_file(self):
         file_path = QFileDialog.getOpenFileName()[0]
-        self.kitti_calib_file_path = file_path
-        self.kitt_dataset_calib_file_button.setText(file_path.split('/')[-1])
+        self.set_calib_file(file_path)
     
     @Slot()
     def select_kitti_poses_file(self):
         file_path = QFileDialog.getOpenFileName()[0]
+        self.set_poses_file(file_path)
+    
+    @Slot()
+    def set_left_images_folder(self, folder_path):
+        self.kitti_left_folder_path = folder_path
+        print(self.kitti_left_folder_path )
+        self.kitti_left_folder_button.setText(folder_path.split('/')[-1])
+    
+    @Slot()
+    def set_right_images_folder(self, folder_path):
+        self.kitti_right_folder_path = folder_path
+        self.kitti_right_folder_button.setText(folder_path.split('/')[-1])
+        
+    @Slot()
+    def set_label_images_folder(self, folder_path):
+        self.kitti_label_folder_path = folder_path
+        self.kitti_label_folder_button.setText(folder_path.split('/')[-1])
+    
+    @Slot()
+    def set_calib_file(self, file_path):
+        self.kitti_calib_file_path = file_path
+        self.kitt_dataset_calib_file_button.setText(file_path.split('/')[-1])
+    
+    @Slot()
+    def set_poses_file(self, file_path):
         self.kitti_poses_file_path = file_path
         self.kitt_dataset_poses_file_button.setText(file_path.split('/')[-1])
+    
+    @Slot()
+    def set_timestamps_file(self, file_path):
+        self.kitti_time_file_path = file_path
+        self.kitt_dataset_time_file_button.setText(file_path.split('/')[-1])
+        
     
 class VideoDatasetWidget(QWidget):
     def __init__(self, parent=None):
@@ -639,11 +675,19 @@ class DatasetWidget(QWidget):
         
         self.default_dataset_type = dataset_type
         self.dataset_type = self.default_dataset_type
+        self.config_file = ""
         
         # Dataset type
         self.dataset_type_list_widget = QComboBox()
         self.dataset_type_list_widget.addItems([DATASET_TYPE.ZED.name, DATASET_TYPE.KITTI.name, DATASET_TYPE.VIDEO.name])
         self.dataset_type_list_widget.setCurrentText(self.dataset_type.name)
+        
+        # Config File Widget
+        self.config_file_label = QLabel("Config File")
+        self.config_file_folder_button = QPushButton("Select File")
+        self.config_file_layout = QVBoxLayout()
+        self.config_file_layout.addWidget(self.config_file_label)
+        self.config_file_layout.addWidget(self.config_file_folder_button)
         
         # Dataset Widgets
         self.zed_dataset_widget = ZEDDatasetWidget(default_label_folder_path="", default_dataset_file_path="")
@@ -659,15 +703,23 @@ class DatasetWidget(QWidget):
         
         self.dataset_layout = QHBoxLayout()
         self.dataset_layout.addWidget(self.dataset_type_list_widget, 10)
-        self.dataset_layout.addWidget(self.stacked_widget, 90)
+        self.dataset_layout.addLayout(self.config_file_layout, 10)
+        self.dataset_layout.addWidget(self.stacked_widget, 80)
         
         self.setLayout(self.dataset_layout)
         
         self.dataset_type_list_widget.activated.connect(self.on_dataset_type_changed)
+        self.config_file_folder_button.clicked.connect(self.select_config_file)
         
     def reset(self):
         self.dataset_type = self.default_dataset_type
         self.dataset_type_list_widget.setCurrentText(self.dataset_type.name)
+        
+    @Slot()
+    def select_config_file(self):
+        file_path = QFileDialog.getOpenFileName()[0]
+        self.config_file = file_path
+        self.config_file_folder_button.setText(file_path.split('/')[-1])
         
     @Slot()
     def on_dataset_type_changed(self, index):
@@ -680,6 +732,18 @@ class DatasetWidget(QWidget):
         if(index == DATASET_TYPE.VIDEO.value):
             self.dataset_type = DATASET_TYPE.VIDEO
             
+    def set_dataset_type(self, index):
+        print("Changing the Dataset Type: ", index)
+        dataset_type = self.default_dataset_type
+        if(index == DATASET_TYPE.ZED.value):
+            dataset_type = DATASET_TYPE.ZED
+        if(index == DATASET_TYPE.KITTI.value):
+            dataset_type = DATASET_TYPE.KITTI
+        if(index == DATASET_TYPE.VIDEO.value):
+            dataset_type = DATASET_TYPE.VIDEO
+        self.dataset_type_list_widget.setCurrentText(dataset_type.name)
+        
+        self.on_dataset_type_changed(index)
 
 class StartStopResetWidget(QWidget):
     def __init__(self, parent=None):

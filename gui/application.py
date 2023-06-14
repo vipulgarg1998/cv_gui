@@ -13,6 +13,7 @@ from cv_gui.gui.process import Process
 from cv_gui.utils.recorder import Recorder
 
 import cv_gui.utils.flags as cv_gui
+from cv_gui.utils.config_file_handler import parse_config_file, save_config_file
 from cv_gui.gui.widgets import DatasetWidget, DynamicParameterWidget, ImageSaveWidget, PlotWidget, SaveMenuWidget, StartStopResetWidget, TimestampWidget, VideoControlWidget
 
 class Application(QMainWindow):
@@ -116,7 +117,63 @@ class Application(QMainWindow):
         about = QAction("About Qt", self, shortcut=QKeySequence(QKeySequence.HelpContents),
                         triggered=qApp.aboutQt)
         self.menu_about.addAction(about)
+        
+        # About Config Files
+        self.menu_config_file = self.menu.addMenu("Config File")
+        load_config_file = QAction("Load Config File", self, triggered=self.load_config_file)
+        save_config_file = QAction("Save Config File", self, triggered=self.save_config_file)
+        
+        self.menu_config_file.addAction(load_config_file)
+        self.menu_config_file.addAction(save_config_file)
 
+    def load_config_file(self):
+        file_path = QFileDialog.getOpenFileName()[0]
+        config_file_path = file_path
+        
+        config_data = parse_config_file(config_file_path)
+        
+        dataset_type = int(config_data["dataset"])
+        
+        self.dataset_widget.set_dataset_type(dataset_type)
+        
+        if(dataset_type == cv_gui.DATASET_TYPE.ZED.value):
+            self.dataset_widget.zed_dataset_widget.set_zed_file(config_data["svo_file"])
+            self.dataset_widget.zed_dataset_widget.set_label_folder(config_data["semantic_label_images_folder"])
+            
+        if(dataset_type == cv_gui.DATASET_TYPE.KITTI.value):
+            self.dataset_widget.kitti_dataset_widget.set_left_images_folder(config_data["left_images_folder"])
+            self.dataset_widget.kitti_dataset_widget.set_right_images_folder(config_data["right_images_folder"])
+            self.dataset_widget.kitti_dataset_widget.set_label_images_folder(config_data["semantic_label_images_folder"])
+            self.dataset_widget.kitti_dataset_widget.set_poses_file(config_data["pose_file"])
+            self.dataset_widget.kitti_dataset_widget.set_timestamps_file(config_data["timestamps_file"])
+            self.dataset_widget.kitti_dataset_widget.set_calib_file(config_data["calib_file"])
+        
+            
+    def save_config_file(self):
+        config_data = {}
+        
+        dataset_type = self.dataset_widget.dataset_type.value
+        config_data["dataset"] = dataset_type
+        
+        if(dataset_type == cv_gui.DATASET_TYPE.ZED.value):
+            config_data["svo_file"] = self.dataset_widget.zed_dataset_widget.zed_dataset_file_path
+            config_data["semantic_label_images_folder"] = self.dataset_widget.zed_dataset_widget.zed_label_folder_path
+            
+        if(dataset_type == cv_gui.DATASET_TYPE.KITTI.value):
+            config_data["left_images_folder"] = self.dataset_widget.kitti_dataset_widget.kitti_left_folder_path
+            config_data["right_images_folder"] = self.dataset_widget.kitti_dataset_widget.kitti_right_folder_path
+            config_data["semantic_label_images_folder"] = self.dataset_widget.kitti_dataset_widget.kitti_label_folder_path
+            config_data["pose_file"] = self.dataset_widget.kitti_dataset_widget.kitti_poses_file_path
+            config_data["timestamps_file"] = self.dataset_widget.kitti_dataset_widget.kitti_time_file_path
+            config_data["calib_file"] = self.dataset_widget.kitti_dataset_widget.kitti_calib_file_path
+        
+        
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self,
+            "Save File", "", "Config Files(*.yml)", options = options)
+        
+        save_config_file(fileName, config_data)
 
     def get_images_layout(self, add_extra_image_window = False):
         # Create widgets for images with save box
@@ -215,17 +272,19 @@ class Application(QMainWindow):
     @Slot()
     def on_start(self):
         print("Starting...")
-                
+        
         if(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.ZED):
             self.process.on_start(self.dataset_widget.zed_dataset_widget.zed_dataset_file_path,
-                                  self.dataset_widget.zed_dataset_widget.zed_label_folder_path)
+                                  self.dataset_widget.zed_dataset_widget.zed_label_folder_path,
+                                  self.dataset_widget.config_file)
         elif(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.KITTI):
             self.process.on_start(self.dataset_widget.kitti_dataset_widget.kitti_left_folder_path, 
                                   self.dataset_widget.kitti_dataset_widget.kitti_right_folder_path, 
                                   self.dataset_widget.kitti_dataset_widget.kitti_label_folder_path, 
                                   self.dataset_widget.kitti_dataset_widget.kitti_calib_file_path, 
                                   self.dataset_widget.kitti_dataset_widget.kitti_poses_file_path, 
-                                  self.dataset_widget.kitti_dataset_widget.kitti_time_file_path)
+                                  self.dataset_widget.kitti_dataset_widget.kitti_time_file_path,
+                                  self.dataset_widget.config_file)
         
         # Set the frame count to Video Control GUI
         frame_count = self.process.camera.get_frame_count()

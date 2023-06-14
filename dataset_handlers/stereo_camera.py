@@ -4,14 +4,31 @@ import numpy as np
 import cv2 as cv
 
 import cv_gui.utils.flags as cv_gui
+from cv_gui.utils.data_parsers import get_frame_numbers_from_config_file
 
 
 class StereoCamera(Camera):
-    def __init__(self, dataset = cv_gui.DATASET_TYPE.KITTI):
+    def __init__(self, dataset = cv_gui.DATASET_TYPE.KITTI, config_file = ""):
         super().__init__(dataset = dataset)
 
         self.base_camera_type = None
         self.basic_calibration_params = {}
+        
+        self.config_file = config_file
+        
+        self.frame_numbers = []
+        
+    def set_config_file(self, config_file):
+        self.config_file = config_file
+
+    def process_config_file(self, config_file):
+        self.frame_numbers = get_frame_numbers_from_config_file(config_file)
+        
+    def get_next_index(self, idx):
+        if(self.frame_numbers == []):
+            return idx + 1
+        
+        return self.frame_numbers.pop(0)
 
     def get_disparity_img(self, left_img, right_img, fill = False, gray = True):
 

@@ -23,7 +23,7 @@ class DatasetLoader(StereoCamera):
         self.color = color
         
         self.initial_pose = None
-        self.idx = 0
+        self.idx = -1
 
     def set_left_folder(self, path):
         self.left_path = path
@@ -60,6 +60,10 @@ class DatasetLoader(StereoCamera):
             # Load calibration params
             if(self.calib_file):
                 self.load_caliberation_paramters(calib_file=self.calib_file)
+                
+            # Read config file
+            if(self.config_file != ""):
+                self.process_config_file(self.config_file)
                 
             # Read poses
             if(self.pose_file):
@@ -133,7 +137,9 @@ class DatasetLoader(StereoCamera):
         
         assert gray or color, "Either gray or color frag should be true"
 
-        if(self.idx == self.img_count):
+        self.idx = self.get_next_index(self.idx)
+        
+        if(self.idx >= self.img_count):
             return cv_gui.ERROR.END_OF_FILE, data
 
         
@@ -169,8 +175,6 @@ class DatasetLoader(StereoCamera):
             data["t"] = self.timestamps[self.idx][0]
         if(self.label_path):
             data["label_img"] = cv.imread(self.label_img_files[self.idx], 0)
-            
-        self.idx = self.idx + 1
         
         return cv_gui.ERROR.SUCCESS, data
     

@@ -12,6 +12,7 @@ class ZEDGUISample:
         self.gui.set_img1_callback(self.return_left_image)
         self.gui.set_img2_callback(self.return_right_image)
         self.gui.set_timestamp_callback(self.return_timestamp)
+        self.gui.set_on_close(self.on_close)
         
         self.gray = True
         self.color = True
@@ -28,13 +29,15 @@ class ZEDGUISample:
         self.gui.set_on_start(self.on_zed_start)
         
         self.data = {}
-       
         
     def on_data_receive(self, data, old_frame = False):
         self.data = data
         
         # Do some processing if needed
         
+    def on_close(self):
+        pass
+    
     def return_timestamp(self, data):
         return f"{data['t']}"
     
@@ -46,10 +49,11 @@ class ZEDGUISample:
         file_name = f"Seq001Fr{str(data['index']).zfill(8)}R"
         return data['right_color_img'], cv_gui.IMAGE_TYPES.BGR, file_name
 
-    def on_zed_start(self, filepath, label_path = ""):
+    def on_zed_start(self, filepath, label_path = "", config_file = ""):
         print(label_path)
         self.camera.set_from_svo_file(filepath)
         self.camera.set_label_folder(label_path)
+        self.camera.set_config_file(config_file)
         self.setup_stereo()
         self.camera.set_runtime_parameters(sensing_mode=ZEDSensingMode.FILL, confidence_th=100, textureness_confidence_th=100)
         
@@ -64,4 +68,4 @@ class ZEDGUISample:
 if __name__ == "__main__":
     gui_test = ZEDGUISample()
     gui_test.gui.show()
-    gui_test.gui.close()
+    gui_test.gui.exit()
