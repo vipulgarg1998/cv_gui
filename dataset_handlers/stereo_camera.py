@@ -28,6 +28,9 @@ class StereoCamera(Camera):
         if(self.frame_numbers == []):
             return idx + 1
         
+        if(self.frame_numbers[0] == 0):
+            self.frame_numbers.pop(0)
+        
         return self.frame_numbers.pop(0)
 
     def get_disparity_img(self, left_img, right_img, fill = False, gray = True):

@@ -31,8 +31,9 @@ class ZEDSensingMode(Enum):
 
 class ZED(StereoCamera):
     def __init__(self, resolution = ZEDResolution.HD2K, depth_mode = ZEDDepthMode.NEURAL, depth_unit = ZEDDepthUnit.MILLIMETER, svo_file_path = "", 
-                 depth_min_dist = 0.15, depth_max_dist = 50, enable_pos_tracking = False, gray = True, color = True, label_path = "", use_rectified = True):
-        super().__init__(dataset = cv_gui.DATASET_TYPE.ZED)
+                 depth_min_dist = 0.15, depth_max_dist = 50, enable_pos_tracking = False, gray = True, color = True, label_path = "", use_rectified = True,
+                 config_file = ""):
+        super().__init__(dataset = cv_gui.DATASET_TYPE.ZED, config_file=config_file)
         self.zed = sl.Camera()
         
         self.gray = gray
@@ -54,10 +55,13 @@ class ZED(StereoCamera):
         if(self.pose_tracking_enabled):
             err = self.zed.zed.enable_positional_tracking(tracking_parameters)
         
-        self.svo_file_path = svo_file_path
+        # File paths
         self.label_path = label_path
+        
+        self.svo_file_path = svo_file_path
         if(self.svo_file_path != ""):
             self.init_params.set_from_svo_file(self.svo_file_path)
+
 
         # Create and set RuntimeParameters after opening the camera
         self.runtime_parameters = sl.RuntimeParameters()
@@ -87,7 +91,7 @@ class ZED(StereoCamera):
         
     def set_label_folder(self, filepath):
         self.label_path = filepath
-
+        
     def open_camera(self):
         # Open the camera
         err_code = self.zed.open(self.init_params)
@@ -98,6 +102,9 @@ class ZED(StereoCamera):
     def init(self):
         if(not self.camera_open):
             self.open_camera()
+            
+        if(self.config_file != ""):
+            self.process_config_file(self.config_file)
             
         width = self.zed.get_camera_information().camera_resolution.width
         height = self.zed.get_camera_information().camera_resolution.height
@@ -167,6 +174,9 @@ class ZED(StereoCamera):
         data = {}
 
         err_code = self.zed.grab(self.runtime_parameters)
+        # self.idx = self.get_next_index(self.idx)
+        
+        # err_code = self.grab(self.idx, self.runtime_parameters)
         if(err_code != sl.ERROR_CODE.SUCCESS):
             return cv_gui.ERROR.END_OF_FILE, data
         
@@ -212,9 +222,14 @@ class ZED(StereoCamera):
         
         data["t"] = self.zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_nanoseconds()*(1e-9)  # Get the image timestamp in seconds
         # update the frame count
-        self.idx = self.idx + 1
-
+        self.idx = self.get_next_index(self.idx)
         return cv_gui.ERROR.SUCCESS, data
+    
+    def grab(self, idx, runtime_params):
+        self.jump_to(idx)
+        err_code = self.zed.grab(runtime_params)
+        
+        return err_code
     
     def get_depth_img(self):
         # Retrieve depth map. Depth is aligned on the left image
@@ -259,7 +274,8 @@ class ZED(StereoCamera):
         
     def jump_to(self, frame_number):
         # Works only if the camera is open in SVO playback mode.
-        assert self.svo_file_path != "", "SVO File Path is not set"
+        if(self.svo_file_path == ""):
+            return
         
         # Jump to the frame number. The next call to grab() will read the provided frame number.
         self.zed.set_svo_position(frame_number)

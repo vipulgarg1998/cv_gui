@@ -1,6 +1,6 @@
 import yaml
 
-def parse_config_file(config_file_path : str):
+def read_config_file(config_file_path : str):
     with open(config_file_path) as f_in:
         data = yaml.safe_load(f_in)
     

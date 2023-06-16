@@ -13,7 +13,7 @@ from cv_gui.gui.process import Process
 from cv_gui.utils.recorder import Recorder
 
 import cv_gui.utils.flags as cv_gui
-from cv_gui.utils.config_file_handler import parse_config_file, save_config_file
+from cv_gui.utils.config_file_handler import read_config_file, save_config_file
 from cv_gui.gui.widgets import DatasetWidget, DynamicParameterWidget, ImageSaveWidget, PlotWidget, SaveMenuWidget, StartStopResetWidget, TimestampWidget, VideoControlWidget
 
 class Application(QMainWindow):
@@ -130,7 +130,7 @@ class Application(QMainWindow):
         file_path = QFileDialog.getOpenFileName()[0]
         config_file_path = file_path
         
-        config_data = parse_config_file(config_file_path)
+        config_data = read_config_file(config_file_path)
         
         dataset_type = int(config_data["dataset"])
         
