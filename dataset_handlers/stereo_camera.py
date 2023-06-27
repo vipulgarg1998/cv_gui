@@ -4,25 +4,36 @@ import numpy as np
 import cv2 as cv
 
 import cv_gui.utils.flags as cv_gui
-from cv_gui.utils.data_parsers import get_frame_numbers_from_config_file
+from cv_gui.utils.data_parsers import get_frame_numbers_from_seq_control_file
 
 
 class StereoCamera(Camera):
-    def __init__(self, dataset = cv_gui.DATASET_TYPE.KITTI, config_file = ""):
+    def __init__(self, dataset = cv_gui.DATASET_TYPE.KITTI, seq_control_file = ""):
         super().__init__(dataset = dataset)
 
+        self.sequence_name = ""
+        self.config_data = {}
         self.base_camera_type = None
         self.basic_calibration_params = {}
         
-        self.config_file = config_file
+        self.seq_control_file = seq_control_file
         
         self.frame_numbers = []
         
-    def set_config_file(self, config_file):
-        self.config_file = config_file
+    def set_seq_control_file(self, seq_control_file):
+        self.seq_control_file = seq_control_file
+        
+    def set_config_data(self, config_data):
+        self.config_data = config_data
 
-    def process_config_file(self, config_file):
-        self.frame_numbers = get_frame_numbers_from_config_file(config_file)
+    def process_seq_control_file(self, seq_control_file):
+        self.frame_numbers = get_frame_numbers_from_seq_control_file(seq_control_file)
+        
+    def get_seq_name(self):
+        if(self.config_data):
+            return self.config_data["sequence"]
+        
+        return "DUMMY-SEQ-XX"
         
     def get_next_index(self, idx):
         if(self.frame_numbers == []):

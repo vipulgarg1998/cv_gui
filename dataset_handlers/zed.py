@@ -32,8 +32,8 @@ class ZEDSensingMode(Enum):
 class ZED(StereoCamera):
     def __init__(self, resolution = ZEDResolution.HD2K, depth_mode = ZEDDepthMode.NEURAL, depth_unit = ZEDDepthUnit.MILLIMETER, svo_file_path = "", 
                  depth_min_dist = 0.15, depth_max_dist = 50, enable_pos_tracking = False, gray = True, color = True, label_path = "", use_rectified = True,
-                 config_file = ""):
-        super().__init__(dataset = cv_gui.DATASET_TYPE.ZED, config_file=config_file)
+                 seq_control_file = ""):
+        super().__init__(dataset = cv_gui.DATASET_TYPE.ZED, seq_control_file=seq_control_file)
         self.zed = sl.Camera()
         
         self.gray = gray
@@ -103,8 +103,8 @@ class ZED(StereoCamera):
         if(not self.camera_open):
             self.open_camera()
             
-        if(self.config_file != ""):
-            self.process_config_file(self.config_file)
+        if(self.seq_control_file != ""):
+            self.process_seq_control_file(self.seq_control_file)
             
         width = self.zed.get_camera_information().camera_resolution.width
         height = self.zed.get_camera_information().camera_resolution.height

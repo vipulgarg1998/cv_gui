@@ -675,7 +675,7 @@ class DatasetWidget(QWidget):
         
         self.default_dataset_type = dataset_type
         self.dataset_type = self.default_dataset_type
-        self.config_file = ""
+        self.seq_control_file = ""
         
         # Dataset type
         self.dataset_type_list_widget = QComboBox()
@@ -683,11 +683,11 @@ class DatasetWidget(QWidget):
         self.dataset_type_list_widget.setCurrentText(self.dataset_type.name)
         
         # Config File Widget
-        self.config_file_label = QLabel("Config File")
-        self.config_file_folder_button = QPushButton("Select File")
-        self.config_file_layout = QVBoxLayout()
-        self.config_file_layout.addWidget(self.config_file_label)
-        self.config_file_layout.addWidget(self.config_file_folder_button)
+        self.seq_control_file_label = QLabel("Control File")
+        self.seq_control_file_folder_button = QPushButton("Select File")
+        self.seq_control_file_layout = QVBoxLayout()
+        self.seq_control_file_layout.addWidget(self.seq_control_file_label)
+        self.seq_control_file_layout.addWidget(self.seq_control_file_folder_button)
         
         # Dataset Widgets
         self.zed_dataset_widget = ZEDDatasetWidget(default_label_folder_path="", default_dataset_file_path="")
@@ -703,23 +703,23 @@ class DatasetWidget(QWidget):
         
         self.dataset_layout = QHBoxLayout()
         self.dataset_layout.addWidget(self.dataset_type_list_widget, 10)
-        self.dataset_layout.addLayout(self.config_file_layout, 10)
+        self.dataset_layout.addLayout(self.seq_control_file_layout, 10)
         self.dataset_layout.addWidget(self.stacked_widget, 80)
         
         self.setLayout(self.dataset_layout)
         
         self.dataset_type_list_widget.activated.connect(self.on_dataset_type_changed)
-        self.config_file_folder_button.clicked.connect(self.select_config_file)
+        self.seq_control_file_folder_button.clicked.connect(self.select_seq_control_file)
         
     def reset(self):
         self.dataset_type = self.default_dataset_type
         self.dataset_type_list_widget.setCurrentText(self.dataset_type.name)
         
     @Slot()
-    def select_config_file(self):
+    def select_seq_control_file(self):
         file_path = QFileDialog.getOpenFileName()[0]
-        self.config_file = file_path
-        self.config_file_folder_button.setText(file_path.split('/')[-1])
+        self.seq_control_file = file_path
+        self.seq_control_file_folder_button.setText(file_path.split('/')[-1])
         
     @Slot()
     def on_dataset_type_changed(self, index):

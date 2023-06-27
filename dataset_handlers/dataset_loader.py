@@ -62,8 +62,8 @@ class DatasetLoader(StereoCamera):
                 self.load_caliberation_paramters(calib_file=self.calib_file)
                 
             # Read config file
-            if(self.config_file != ""):
-                self.process_config_file(self.config_file)
+            if(self.seq_control_file != ""):
+                self.process_seq_control_file(self.seq_control_file)
                 
             # Read poses
             if(self.pose_file):

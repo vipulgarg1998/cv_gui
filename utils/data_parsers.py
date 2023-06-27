@@ -1,6 +1,6 @@
 import json
 
-def get_frame_numbers_from_config_file(filename : str):
+def get_frame_numbers_from_seq_control_file(filename : str):
     with open(filename) as f_in:
         data = json.load(f_in)
         
