@@ -79,12 +79,25 @@ class Application(QMainWindow):
         self.process.updateFrame1.connect(self.setImage1)
         self.process.updateFrame2.connect(self.setImage2)
         self.process.updateTimestamp.connect(self.set_timestamp)
+        self.process.updateMiscData.connect(self.plot_simple_data)
         
         if(add_extra_image_window):
             self.process.updateFrame3.connect(self.setImage3)
             
         # Recorder
         self.data_recorder = Recorder()
+
+    def plot_simple_data(self, data):
+        if(data):
+            prev_vertical_avg = data["prev"]
+            curr_vertical_avg = data["curr"]
+            hamming_win = data["hamming"]
+            
+            self.plot_widget.clear()
+            self.plot_widget.plot_simple_data(prev_vertical_avg, legend="Yaw Est", color="red")
+            self.plot_widget.plot_simple_data(curr_vertical_avg, legend="Yaw Gt", color="blue")
+            self.plot_widget.plot_simple_data(hamming_win, legend="Yaw Pred", color="black")
+            
 
     def reset(self):
         self.process.reset_process()
@@ -121,7 +134,7 @@ class Application(QMainWindow):
         
         # About Config Files
         self.menu_config_file = self.menu.addMenu("Config File")
-        load_config_file = QAction("Load Config File", self, triggered=self.load_config_file)
+        load_config_file = QAction("Load Config File", self, shortcut=QKeySequence(QKeySequence.Refresh), triggered=self.load_config_file)
         save_config_file = QAction("Save Config File", self, triggered=self.save_config_file)
         
         self.menu_config_file.addAction(load_config_file)

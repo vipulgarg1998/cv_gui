@@ -812,21 +812,50 @@ class PlotWidget(QWidget):
         self.graph_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.graph_widget.setBackground('w')
         
+        self.layout = QHBoxLayout()
+        self.layout.addWidget(self.graph_widget)
+        
+        self.setLayout(self.layout)
+        
+    def create_rpy_plots(self, x_label = 'Time (seconds)', y_label = 'Rotation (Degrees)'):
         #Add legend
-        self.graph_widget.addLegend()
         styles = {'color':'r', 'font-size':'20px'}
         self.graph_widget.setLabel('left', y_label, **styles)
         self.graph_widget.setLabel('bottom', x_label, **styles)
+        self.graph_widget.addLegend()
         
         # Set plots
         self.r_plot = self.graph_widget.plot([], [], "Roll", 'r')
         self.y_plot = self.graph_widget.plot([], [], "Pitch", 'b')
         self.p_plot = self.graph_widget.plot([], [], "Yaw", 'g')
         
-        self.layout = QHBoxLayout()
-        self.layout.addWidget(self.graph_widget)
+    def create_plot(self, x_label="", y_label="", color = "b", font=20, title="", x_range=None, y_range=None): 
+        # Add Title       
+        self.graph_widget.setTitle(title, color=color, size=f"{font}pt")
+        # Add Axis Labels
+        styles = {'color':color, 'font-size':f'{font}px'}
+        self.graph_widget.setLabel('left', y_label, **styles)
+        self.graph_widget.setLabel('bottom', x_label, **styles)
+        #Add legend
+        self.graph_widget.addLegend()
         
-        self.setLayout(self.layout)
+        #Set Range
+        if(x_range is not None):
+            self.graph_widget.setXRange(x_range[0], x_range[1], padding=0)
+        if(y_range is not None):
+            self.graph_widget.setYRange(y_range[0], y_range[1], padding=0)
+        
+    def plot_simple_data(self, y, x = None, legend="", color="r", use_symbol = False):
+        pen = pg.mkPen(color=color)
+        
+        if(x is None):
+            x = range(0, len(y))
+        
+        if(not use_symbol):
+            self.graph_widget.plot(x, y, name=legend, pen=pen)
+        else:
+            self.graph_widget.plot(x, y, name=legend, pen=pen, symbol='+', symbolSize=30, symbolBrush=(color))
+        
         
     def reset(self):
         self.clear_plot()
@@ -835,6 +864,9 @@ class PlotWidget(QWidget):
         self.plot_(self.r_plot, [], [], "Roll", 'r')
         self.plot_(self.p_plot, [], [], "Pitch", 'b')
         self.plot_(self.y_plot, [], [], "Yaw", 'g')
+        
+    def clear(self):
+        self.graph_widget.clear()
 
     def plot_(self, plt, x, y, plotname, color):
         pen = pg.mkPen(color=color, width=5)

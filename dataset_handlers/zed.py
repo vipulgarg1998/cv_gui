@@ -106,6 +106,10 @@ class ZED(StereoCamera):
         if(self.seq_control_file != ""):
             self.process_seq_control_file(self.seq_control_file)
             
+        # Load Label Files
+        if(self.label_path):  
+            self.label_img_files = self.get_img_files_from_dir(self.label_path)
+            
         width = self.zed.get_camera_information().camera_resolution.width
         height = self.zed.get_camera_information().camera_resolution.height
         # Set Camera frames 
@@ -214,9 +218,7 @@ class ZED(StereoCamera):
             data['right_color_img'] = cv.cvtColor(self.right_image_color.get_data(), cv.COLOR_BGRA2BGR)
             
         if(self.label_path):
-            data['label_img'] = cv.imread(f"{self.label_path}/Seq001Fr{str(self.idx).zfill(8)}M.jpeg", 0)
-            # cv.imshow("Seg", data['label_img'])
-            # cv.waitKey(0)
+            data["label_img"] = cv.imread(self.label_img_files[self.idx], 0)
             
         data['index'] = self.idx
         

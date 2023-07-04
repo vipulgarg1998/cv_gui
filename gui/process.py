@@ -10,6 +10,7 @@ class Process(QThread):
     updateFrame1 = Signal(np.ndarray, cv_gui.IMAGE_TYPES, str, bool)
     updateFrame2 = Signal(np.ndarray, cv_gui.IMAGE_TYPES, str, bool)
     updateFrame3 = Signal(np.ndarray, cv_gui.IMAGE_TYPES, str, bool)
+    updateMiscData = Signal(dict)
     updateTimestamp= Signal(str)
 
     def __init__(self, parent=None, add_extra_image_window = False):
@@ -35,6 +36,7 @@ class Process(QThread):
         self.img1_callback = None
         self.img2_callback = None
         self.img3_callback = None
+        self.misc_data_callback = None
         self.timestamp_callback = None
         self.send_data_to_camera = None
         
@@ -113,6 +115,11 @@ class Process(QThread):
         if(self.add_extra_image_window):
             self.current_img3, img3_format_type, img3_name = self.img3_callback(data)
             self.updateFrame3.emit(self.current_img3, img3_format_type, img3_name, forcefully_save_img)
+            
+        # Misc data
+        if(self.misc_data_callback is not None):
+            misc_data = self.misc_data_callback()
+            self.updateMiscData.emit(misc_data)
         
     def get_img_dim(self, img):
         ch = 1
