@@ -260,7 +260,7 @@ class ZED(StereoCamera):
     def get_zed_disparity_img(self):
         # Retrieve depth map. Depth is aligned on the left image
         self.zed.retrieve_measure(self.disparity_image, sl.MEASURE.DISPARITY)
-        return self.disparity_image.get_data()
+        return np.abs(self.disparity_image.get_data())
 
     def get_zed_point_cloud(self):
         self.zed.retrieve_measure(self.point_cloud, sl.MEASURE.XYZRGBA)
