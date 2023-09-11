@@ -44,7 +44,7 @@ class StereoCamera(Camera):
         
         return self.frame_numbers.pop(0)
 
-    def get_disparity_img(self, left_img, right_img, fill = False, gray = True):
+    def get_disparity_img(self, left_img, right_img, fill = False, gray = True, fill_value = 10000):
 
         if(not gray):
             left_img = cv.cvtColor(left_img, cv.COLOR_RGB2GRAY)
@@ -67,8 +67,8 @@ class StereoCamera(Camera):
 
         if(fill):
             # Avoid instability and division by zero
-            disparity_img = np.where(disparity_img == 0.0, 10000, disparity_img)
-            disparity_img = np.where(disparity_img == -1.0, 10000, disparity_img)
+            disparity_img = np.where(disparity_img == 0.0, fill_value, disparity_img)
+            disparity_img = np.where(disparity_img == -1.0, fill_value, disparity_img)
 
         return disparity_img
 

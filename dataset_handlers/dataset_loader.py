@@ -6,8 +6,19 @@ from cv_gui.dataset_handlers.stereo_camera import StereoCamera
 import cv_gui.utils.flags as cv_gui
 
 class DatasetLoader(StereoCamera):
-    def __init__(self, left_path = "", right_path = "", label_path = "", dataset_type = cv_gui.DATASET_TYPE.KITTI, pose_file = "", timestamp_file = "", 
-                 calib_file = "", gray = True, color = True):
+    def __init__(self,
+                 left_path = "",
+                 right_path = "",
+                 label_path = "",
+                 dataset_type = cv_gui.DATASET_TYPE.KITTI,
+                 pose_file = "",
+                 timestamp_file = "", 
+                 calib_file = "",
+                 gray = True,
+                 color = True,
+                 disparity_fill = False,
+                 disparity_fill_value = 10000):
+        
         super().__init__(dataset=dataset_type)
         
         self.dataset_type = dataset_type
@@ -21,6 +32,8 @@ class DatasetLoader(StereoCamera):
         
         self.gray = gray
         self.color = color
+        self.disparity_fill = disparity_fill
+        self.disparity_fill_value = disparity_fill_value
         
         self.initial_pose = None
         self.idx = 0
@@ -42,7 +55,17 @@ class DatasetLoader(StereoCamera):
         
     def set_pose_file_path(self, path):
         self.pose_file = path
-
+        
+    def set_config_data(self, config_data):
+        super().set_config_data(config_data)
+        
+        self.set_left_folder(config_data["left_images_folder"])
+        self.set_right_folder(config_data["right_images_folder"])
+        self.set_label_folder(config_data["semantic_label_images_folder"])
+        self.set_calib_file_path(config_data["calib_file"])
+        self.set_timestamp_file_path(config_data["timestamps_file"])
+        self.set_pose_file_path(config_data["pose_file"])
+        
     def init(self):
         if(self.dataset_type == cv_gui.DATASET_TYPE.KITTI):
             left_img_folder = self.left_path
@@ -157,6 +180,12 @@ class DatasetLoader(StereoCamera):
         if(color):
             data["left_color_img"] = left_color_img
             data["right_color_img"] = right_color_img
+        
+        data["disparity_img"] = self.get_disparity_img(left_img=left_img,
+                                                       right_img=right_img,
+                                                       fill=self.disparity_fill,
+                                                       fill_value=self.disparity_fill_value)
+        data["depth_img"] = self.get_depth_img_from_disparity_img(data["disparity_img"])
         
         data["index"] = self.idx
 

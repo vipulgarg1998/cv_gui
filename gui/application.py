@@ -287,20 +287,46 @@ class Application(QMainWindow):
     def on_start(self):
         print("Starting...")
         
-        if(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.ZED):
-            self.process.on_start(self.dataset_widget.zed_dataset_widget.zed_dataset_file_path,
-                                  self.dataset_widget.zed_dataset_widget.zed_label_folder_path,
-                                  self.dataset_widget.seq_control_file,
-                                  self.config_data)
-        elif(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.KITTI):
-            self.process.on_start(self.dataset_widget.kitti_dataset_widget.kitti_left_folder_path, 
-                                  self.dataset_widget.kitti_dataset_widget.kitti_right_folder_path, 
-                                  self.dataset_widget.kitti_dataset_widget.kitti_label_folder_path, 
-                                  self.dataset_widget.kitti_dataset_widget.kitti_calib_file_path, 
-                                  self.dataset_widget.kitti_dataset_widget.kitti_poses_file_path, 
-                                  self.dataset_widget.kitti_dataset_widget.kitti_time_file_path,
-                                  self.dataset_widget.seq_control_file,
-                                  self.config_data)
+        # Check the version of implementation
+        if(self.process.camera is None):
+            # Check if config file is not loaded
+            if(not self.config_data):
+                config_data = {}
+                
+                dataset_type = self.dataset_widget.dataset_type.value
+                config_data["dataset"] = dataset_type
+                
+                if(dataset_type == cv_gui.DATASET_TYPE.ZED.value):
+                    config_data["svo_file"] = self.dataset_widget.zed_dataset_widget.zed_dataset_file_path
+                    config_data["semantic_label_images_folder"] = self.dataset_widget.zed_dataset_widget.zed_label_folder_path
+                    
+                if(dataset_type == cv_gui.DATASET_TYPE.KITTI.value):
+                    config_data["left_images_folder"] = self.dataset_widget.kitti_dataset_widget.kitti_left_folder_path
+                    config_data["right_images_folder"] = self.dataset_widget.kitti_dataset_widget.kitti_right_folder_path
+                    config_data["semantic_label_images_folder"] = self.dataset_widget.kitti_dataset_widget.kitti_label_folder_path
+                    config_data["pose_file"] = self.dataset_widget.kitti_dataset_widget.kitti_poses_file_path
+                    config_data["timestamps_file"] = self.dataset_widget.kitti_dataset_widget.kitti_time_file_path
+                    config_data["calib_file"] = self.dataset_widget.kitti_dataset_widget.kitti_calib_file_path
+            else:
+                config_data = self.config_data
+            
+            self.process.camera = self.process.on_start(config_data,
+                                                        self.dataset_widget.seq_control_file)
+        else:
+            if(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.ZED):
+                self.process.on_start(self.dataset_widget.zed_dataset_widget.zed_dataset_file_path,
+                                    self.dataset_widget.zed_dataset_widget.zed_label_folder_path,
+                                    self.dataset_widget.seq_control_file,
+                                    self.config_data)
+            elif(self.dataset_widget.dataset_type == cv_gui.DATASET_TYPE.KITTI):
+                self.process.on_start(self.dataset_widget.kitti_dataset_widget.kitti_left_folder_path, 
+                                    self.dataset_widget.kitti_dataset_widget.kitti_right_folder_path, 
+                                    self.dataset_widget.kitti_dataset_widget.kitti_label_folder_path, 
+                                    self.dataset_widget.kitti_dataset_widget.kitti_calib_file_path, 
+                                    self.dataset_widget.kitti_dataset_widget.kitti_poses_file_path, 
+                                    self.dataset_widget.kitti_dataset_widget.kitti_time_file_path,
+                                    self.dataset_widget.seq_control_file,
+                                    self.config_data)
         
         # Set the frame count to Video Control GUI
         frame_count = self.process.camera.get_frame_count()

@@ -30,8 +30,19 @@ class ZEDSensingMode(Enum):
     FILL = sl.SENSING_MODE.FILL
 
 class ZED(StereoCamera):
-    def __init__(self, resolution = ZEDResolution.HD2K, depth_mode = ZEDDepthMode.NEURAL, depth_unit = ZEDDepthUnit.MILLIMETER, svo_file_path = "", 
-                 depth_min_dist = 0.15, depth_max_dist = 50, enable_pos_tracking = False, gray = True, color = True, label_path = "", use_rectified = True,
+    def __init__(self,
+                 resolution = ZEDResolution.HD2K,
+                 depth_mode = ZEDDepthMode.NEURAL,
+                 depth_unit = ZEDDepthUnit.MILLIMETER,
+                 sensing_mode = ZEDSensingMode.STANDARD,
+                 svo_file_path = "", 
+                 depth_min_dist = 0.15,
+                 depth_max_dist = 50,
+                 enable_pos_tracking = False,
+                 gray = True,
+                 color = True,
+                 label_path = "",
+                 use_rectified = True,
                  seq_control_file = ""):
         super().__init__(dataset = cv_gui.DATASET_TYPE.ZED, seq_control_file=seq_control_file)
         self.zed = sl.Camera()
@@ -65,7 +76,7 @@ class ZED(StereoCamera):
 
         # Create and set RuntimeParameters after opening the camera
         self.runtime_parameters = sl.RuntimeParameters()
-        # self.runtime_parameters.sensing_mode = sl.SENSING_MODE.FILL
+        self.runtime_parameters.sensing_mode = sensing_mode.value
 
         # Index to track the frame number
         self.idx = 0
@@ -91,6 +102,12 @@ class ZED(StereoCamera):
         
     def set_label_folder(self, filepath):
         self.label_path = filepath
+        
+    def set_config_data(self, config_data):
+        super().set_config_data(config_data)
+        
+        self.set_from_svo_file(config_data["svo_file"])
+        self.set_label_folder(config_data["semantic_label_images_folder"])
         
     def open_camera(self):
         # Open the camera
@@ -219,7 +236,10 @@ class ZED(StereoCamera):
             
         if(self.label_path):
             data["label_img"] = cv.imread(self.label_img_files[self.idx], 0)
-            
+        
+        data["disparity_img"] = self.get_zed_disparity_img()
+        data["depth_img"] = self.get_depth_img()
+        
         data['index'] = self.idx
         
         data["t"] = self.zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_nanoseconds()*(1e-9)  # Get the image timestamp in seconds
