@@ -234,6 +234,13 @@ class ZED(StereoCamera):
             data['left_color_img'] = cv.cvtColor(self.left_image_color.get_data(), cv.COLOR_BGRA2BGR)
             data['right_color_img'] = cv.cvtColor(self.right_image_color.get_data(), cv.COLOR_BGRA2BGR)
             
+        # Define absolute and relative poses which are None
+        data["abs_pose"] = None
+        data["abs_pose_right"] = None
+        data["rel_pose"] = None
+        data["rel_pose_right"] = None
+            
+        data["label_img"] = np.ones_like(data['left_img'], dtype=np.uint8)
         if(self.label_path):
             data["label_img"] = cv.imread(self.label_img_files[self.idx], 0)
         

@@ -202,6 +202,8 @@ class DatasetLoader(StereoCamera):
                 
         if(self.timestamp_file):
             data["t"] = self.timestamps[self.idx][0]
+            
+        data["label_img"] = np.ones_like(data['left_img'], dtype=np.uint8)
         if(self.label_path):
             data["label_img"] = cv.imread(self.label_img_files[self.idx], 0)
         
