@@ -35,6 +35,8 @@ class DatasetLoader(StereoCamera):
         self.disparity_fill = disparity_fill
         self.disparity_fill_value = disparity_fill_value
         
+        
+        self.has_labels = False
         self.initial_pose = None
         self.idx = 0
 
@@ -96,6 +98,7 @@ class DatasetLoader(StereoCamera):
                 
             # Load Label Files
             if(self.label_path):  
+                self.has_labels = True
                 self.label_img_files = self.get_img_files_from_dir(label_img_foler)
 
     def get_img_files_from_dir(self, dir):

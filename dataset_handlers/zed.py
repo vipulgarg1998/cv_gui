@@ -68,6 +68,7 @@ class ZED(StereoCamera):
         
         # File paths
         self.label_path = label_path
+        self.has_labels = False
         
         self.svo_file_path = svo_file_path
         if(self.svo_file_path != ""):
@@ -125,6 +126,7 @@ class ZED(StereoCamera):
             
         # Load Label Files
         if(self.label_path):  
+            self.has_labels = True
             self.label_img_files = self.get_img_files_from_dir(self.label_path)
             
         width = self.zed.get_camera_information().camera_resolution.width
@@ -143,6 +145,8 @@ class ZED(StereoCamera):
         # Get and Update Calibration Matrix
         self.set_calibration_parameters(camera_type=cv_gui.CAMERA_TYPE.LEFT_RGB, calib_params=self.get_calib_params(camera_type=cv_gui.CAMERA_TYPE.LEFT_RGB))
         self.set_calibration_parameters(camera_type=cv_gui.CAMERA_TYPE.RIGHT_RGB, calib_params=self.get_calib_params(camera_type=cv_gui.CAMERA_TYPE.RIGHT_RGB))
+        
+        self.h_fov = self.get_calib_params(camera_type=cv_gui.CAMERA_TYPE.LEFT_RGB)["h_fov"]
     
     def get_img_files_from_dir(self, dir):
         files = os.listdir(dir)
@@ -183,6 +187,7 @@ class ZED(StereoCamera):
         calib_params["k"] = k
         calib_params["r"] = R
         calib_params["t"] = T
+        calib_params["h_fov"] = calibration_params.left_cam.h_fov
 
         return calib_params
         

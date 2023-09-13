@@ -6,6 +6,7 @@ import cv_gui.utils.flags as cv_gui
 class Camera:
     def __init__(self, dataset = cv_gui.DATASET_TYPE.KITTI):
         self.cam_parameters = {}
+        self.h_fov = None
         self.dataset = dataset
 
     def load_caliberation_paramters(self, calib_file):
